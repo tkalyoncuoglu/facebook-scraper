@@ -9,12 +9,12 @@ from typing import Iterator, Union
 from requests import RequestException
 from requests_html import HTMLSession
 
-from . import utils
-from .constants import DEFAULT_PAGE_LIMIT, FB_BASE_URL, FB_MOBILE_BASE_URL, FB_W3_BASE_URL
-from .extractors import extract_group_post, extract_post, extract_photo_post
-from .fb_types import Post, Profile
-from .page_iterators import iter_group_pages, iter_pages, iter_photos
-from . import exceptions
+import utils
+from constants import DEFAULT_PAGE_LIMIT, FB_BASE_URL, FB_MOBILE_BASE_URL, FB_W3_BASE_URL
+from extractors import extract_group_post, extract_post, extract_photo_post
+from fb_types import Post, Profile
+from page_iterators import iter_group_pages, iter_pages, iter_photos
+import exceptions
 
 
 logger = logging.getLogger(__name__)
@@ -340,7 +340,7 @@ class FacebookScraper:
         extract_post_fn,
         iter_pages_fn,
         page_limit=DEFAULT_PAGE_LIMIT,
-        options=None,
+        options={"comments":True},
         remove_source=True,
         **kwargs
     ):

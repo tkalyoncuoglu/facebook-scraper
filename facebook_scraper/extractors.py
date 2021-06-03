@@ -9,9 +9,9 @@ from typing import Any, Dict, Optional
 from urllib.parse import parse_qs, urlparse
 from tqdm.auto import tqdm
 
-from . import utils
-from .constants import FB_BASE_URL, FB_MOBILE_BASE_URL
-from .fb_types import Options, Post, RawPost, RequestFunction, Response, URL
+import utils
+from constants import FB_BASE_URL, FB_MOBILE_BASE_URL
+from fb_types import Options, Post, RawPost, RequestFunction, Response, URL
 
 
 try:
@@ -375,7 +375,7 @@ class PostExtractor:
 
     # TODO: Remove `or 0` from this methods
     def extract_likes(self) -> PartialPost:
-        return {
+        normal_try = {
             'likes': utils.find_and_search(
                 self.element, 'footer', self.likes_regex, utils.convert_numeric_abbr
             )
@@ -384,8 +384,14 @@ class PostExtractor:
             or 0,
         }
 
+        if normal_try["likes"] != 0:
+            return normal_try
+
+        return self.extra_try("likes", 0)
+
+
     def extract_comments(self) -> PartialPost:
-        return {
+        normal_try = {
             'comments': utils.find_and_search(
                 self.element, 'footer', self.comments_regex, utils.convert_numeric_abbr
             )
@@ -393,14 +399,44 @@ class PostExtractor:
             or 0,
         }
 
+        if normal_try["comments"] != 0:
+            return normal_try
+
+        return self.extra_try("comments", 1)
+
+    def extra_try(self, tag, n):
+        container = self.element.find('footer', first=True)
+        reg = re.compile(r'\d+,*\d*\s[B|M]|\d+')
+        result = reg.findall(container.text)
+        if len(result) == 0:
+            return {tag: 0}
+        data = result[n]
+        if data.endswith("B"):
+            n = data[:len(data) - 2]
+            n = n.replace(",",".")
+            n = int(float(n) * 1000)
+            return {tag: n}
+        elif data.endswith("M"):
+            n = data[:len(data) - 2]
+            n = n.replace(",",".")
+            n = int(float(n) * 1000000)
+            return {tag: n}
+
+        return {tag: result[n]}
+
     def extract_shares(self) -> PartialPost:
-        return {
+        normal_try = {
             'shares': utils.find_and_search(
                 self.element, 'footer', self.shares_regex, utils.convert_numeric_abbr
             )
             or self.live_data.get("share_count")
             or 0,
         }
+
+        if normal_try["shares"] != 0:
+            return normal_try
+
+        return self.extra_try("shares", 2)
 
     def extract_photo_link_HQ(self, html: str) -> URL:
         # Find a link that says "View Full Size"
