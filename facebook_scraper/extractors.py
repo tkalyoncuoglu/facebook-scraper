@@ -407,7 +407,6 @@ class PostExtractor:
     def extra_try(self, tag, n):
         container = self.element.find('footer', first=True)
         reg = re.compile(r'\d+,*\d*\s[B|M]|\d+')
-        print("container.text : " + container.text )
         result = reg.findall(container.text)
         if len(result) == 0:
             return {tag: 0}
