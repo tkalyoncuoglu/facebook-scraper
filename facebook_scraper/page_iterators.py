@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 def iter_pages(account: str, request_fn: RequestFunction, **kwargs) -> Iterator[Page]:
     start_url = kwargs.pop("start_url", None)
     if not start_url:
-        start_url = utils.urljoin(FB_MOBILE_BASE_URL, f'/{account}/posts/')
+        start_url = utils.urljoin(FB_MOBILE_BASE_URL, f'/{account}')
         try:
             request_fn(start_url)
         except HTTPError as ex:
