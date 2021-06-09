@@ -4,9 +4,9 @@ import locale
 import logging
 import pathlib
 import sys
-import warnings
+#import warnings
 from typing import Any, Dict, Iterator, Optional, Set, Union
-
+from mywarning import warning
 from requests.cookies import cookiejar_from_dict
 
 from .constants import DEFAULT_REQUESTS_TIMEOUT

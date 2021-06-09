@@ -12,9 +12,10 @@ import utils
 from constants import FB_MOBILE_BASE_URL
 from fb_types import URL, Page, RawPage, RequestFunction, Response
 import exceptions
+from mylogger import MyLogger
 
 
-logger = logging.getLogger(__name__)
+logger = MyLogger()
 
 
 def iter_pages(account: str, request_fn: RequestFunction, **kwargs) -> Iterator[Page]:

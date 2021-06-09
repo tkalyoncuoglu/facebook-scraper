@@ -12,7 +12,7 @@ from tqdm.auto import tqdm
 import utils
 from constants import FB_BASE_URL, FB_MOBILE_BASE_URL
 from fb_types import Options, Post, RawPost, RequestFunction, Response, URL
-
+from mylogger import MyLogger
 
 try:
     from youtube_dl import YoutubeDL
@@ -21,7 +21,7 @@ except ImportError:
     YoutubeDL = None
 
 
-logger = logging.getLogger(__name__)
+logger = MyLogger()
 
 # Typing
 PartialPost = Optional[Dict[str, Any]]
@@ -410,6 +410,9 @@ class PostExtractor:
         result = reg.findall(container.text)
         if len(result) == 0:
             return {tag: 0}
+
+        if(n > len(result) - 1):
+            return {tag : 0}
 
         data = result[n]
 

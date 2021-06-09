@@ -1,7 +1,7 @@
 import itertools
 import logging
 from urllib.parse import urljoin
-import warnings
+#import warnings
 import re
 from functools import partial
 from typing import Iterator, Union
@@ -15,7 +15,7 @@ from extractors import extract_group_post, extract_post, extract_photo_post
 from fb_types import Post, Profile
 from page_iterators import iter_group_pages, iter_pages, iter_photos
 import exceptions
-
+from mywarning import warnings
 
 logger = logging.getLogger(__name__)
 
