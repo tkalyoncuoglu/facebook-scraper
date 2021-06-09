@@ -33,8 +33,8 @@ if __name__ == "__main__":
        #"murtaza.dayanc"
         #"tekkekoybelediye"
         #"ilkay.girginerdogan.96"
-        #"profile.php?id=100035360179973"
-        'story.php?story_fbid=450031812852154&id=100035360179973'
+        "profile.php?id=100035360179973"
+        #'story.php?story_fbid=450031812852154&id=100035360179973'
     ]
 
     for word in word_list:

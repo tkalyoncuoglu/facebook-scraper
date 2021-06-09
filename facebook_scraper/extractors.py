@@ -384,7 +384,7 @@ class PostExtractor:
             or 0,
         }
 
-        if normal_try["likes"] != 0:
+        if normal_try["likes"] > 1000:
             return normal_try
 
         return self.extra_try("likes", 0)
@@ -399,30 +399,36 @@ class PostExtractor:
             or 0,
         }
 
-        if normal_try["comments"] != 0:
+        if normal_try["comments"] > 1000:
             return normal_try
 
         return self.extra_try("comments", 1)
 
     def extra_try(self, tag, n):
         container = self.element.find('footer', first=True)
-        reg = re.compile(r'\d+,*\d*\s[B|M]|\d+')
+        reg = re.compile(r'\d+,*\d*[^\r^\n][B|M]|\d+')
         result = reg.findall(container.text)
         if len(result) == 0:
             return {tag: 0}
 
-        if(n > len(result) - 1):
+        if(n == 1 and len(result) == 1) or \
+            (n == 2 and len(result) == 1) :
             return {tag : 0}
 
-        data = result[n]
+        if n==0:
+            data = result[0]
+        elif n==1 or n==2:
+            try:
+                data = result[n]
+            except:
+                data = result[n-1]
 
-        if n == 1 and not (data + " Yorum") in container.text:
-            return {tag : 0}
+            if n == 1 and not (data + " Yorum") in container.text:
+                return {tag : 0}
 
-        if n == 2 and not (data + " Paylaşım") in container.text:
-            return {tag : 0}
+            if n == 2 and not (data + " Paylaşım") in container.text:
+                return {tag : 0}
 
-        data = result[n]
         if data.endswith("B"):
             n = data[:len(data) - 2]
             n = n.replace(",",".")
@@ -434,7 +440,7 @@ class PostExtractor:
             n = int(float(n) * 1000000)
             return {tag: n}
 
-        return {tag: result[n]}
+        return {tag: data}
 
     def extract_shares(self) -> PartialPost:
         normal_try = {
@@ -445,7 +451,7 @@ class PostExtractor:
             or 0,
         }
 
-        if normal_try["shares"] != 0:
+        if normal_try["shares"] > 1000:
             return normal_try
 
         return self.extra_try("shares", 2)

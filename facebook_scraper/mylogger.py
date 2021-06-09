@@ -5,3 +5,5 @@ class MyLogger:
         pass
     def logger(self, msg, *args, **kwargs):
         pass
+    def info(self, msg, *args, **kwargs):
+        pass
