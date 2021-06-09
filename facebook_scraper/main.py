@@ -22,7 +22,7 @@ import pytz
 
 if __name__ == "__main__":
     scraper = FacebookScraper()
-    scraper.login("kaan.onder@teleskop.app", "Teleskopkaan1.")
+    scraper.login("kaan.onder@teleskop.app", "")
     # for post in scraper.get_posts("CengizErgunResmi", pages = 1, comments=True):
     #     print("***************")
     #     print(post["likes"])
