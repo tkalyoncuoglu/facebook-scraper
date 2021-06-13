@@ -22,7 +22,7 @@ from dateparser import parse
 
 if __name__ == "__main__":
     scraper = FacebookScraper()
-    scraper.login("tkalyoncuoglu@gmail.com", "tolstoy")
+    scraper.login("tkalyoncuoglu@gmail.com", "")
     # for post in scraper.get_posts("CengizErgunResmi", pages = 1, comments=False, posts_per_page=1):
     #     print("***************")
     #     print(post["likes"])
@@ -30,10 +30,10 @@ if __name__ == "__main__":
     #     print(post["shares"])
 
     word_list = [
-       #"murtaza.dayanc"
+       "murtaza.dayanc"
         #"tekkekoybelediye"
-        "ilkay.girginerdogan.96"
-        #profile.php?id=100035360179973"
+        #"ilkay.girginerdogan.96"
+        #"profile.php?id=100035360179973"
         #'story.php?story_fbid=450031812852154&id=100035360179973'
     ]
 
