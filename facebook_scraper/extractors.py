@@ -13,6 +13,7 @@ import utils
 from constants import FB_BASE_URL, FB_MOBILE_BASE_URL
 from fb_types import Options, Post, RawPost, RequestFunction, Response, URL
 from mylogger import MyLogger
+from dateparser import DateDataParser
 
 try:
     from youtube_dl import YoutubeDL
@@ -285,17 +286,9 @@ class PostExtractor:
         # Try to extract from the abbr element
         date_element = self.element.find('abbr', first=True)
         if date_element is not None:
-            date = utils.parse_datetime(date_element.text, search=False)
-            if date:
-                return {'time': date}
-            logger.debug("Could not parse date: %s", date_element.text)
-        else:
-            logger.warning("Could not find the abbr element for the date")
-
-        # Try to look in the entire text
-        date = utils.parse_datetime(self.element.text)
-        if date:
-            return {'time': date}
+            ddp = DateDataParser(languages=['tr'])
+            d = ddp.get_date_data(date_element.text)
+            return {'time': d.date_obj}
 
         return None
 

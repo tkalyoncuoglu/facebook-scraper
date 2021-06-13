@@ -18,12 +18,12 @@ import datetime
 import pytz
 
 
-
+from dateparser import parse
 
 if __name__ == "__main__":
     scraper = FacebookScraper()
-    scraper.login("kaan.onder@teleskop.app", "")
-    # for post in scraper.get_posts("CengizErgunResmi", pages = 1, comments=True):
+    scraper.login("tkalyoncuoglu@gmail.com", "tolstoy")
+    # for post in scraper.get_posts("CengizErgunResmi", pages = 1, comments=False, posts_per_page=1):
     #     print("***************")
     #     print(post["likes"])
     #     print(post["comments"])
@@ -32,8 +32,8 @@ if __name__ == "__main__":
     word_list = [
        #"murtaza.dayanc"
         #"tekkekoybelediye"
-        #"ilkay.girginerdogan.96"
-        "profile.php?id=100035360179973"
+        "ilkay.girginerdogan.96"
+        #profile.php?id=100035360179973"
         #'story.php?story_fbid=450031812852154&id=100035360179973'
     ]
 
@@ -55,8 +55,7 @@ if __name__ == "__main__":
         username = word
 
         utc = pytz.UTC
-
-        posts = scraper.get_posts(username, pages=50000, comments = True)
+        posts = scraper.get_posts(username, pages=50000, comments=False)
         for post in posts:
             print(post["time"])
             if post["time"].replace(tzinfo=utc) < datetime.datetime(2020, 12, 31, 23, 59, 59).replace(tzinfo=utc):# and count > 3:

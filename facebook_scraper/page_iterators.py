@@ -15,6 +15,7 @@ import exceptions
 from mylogger import MyLogger
 
 
+
 logger = MyLogger()
 
 
@@ -83,7 +84,10 @@ def generic_iter_pages(start_url, page_parser_cls, request_fn: RequestFunction, 
         if next_page:
             posts_per_page = kwargs.get("options", {}).get("posts_per_page")
             if posts_per_page:
-                next_page = next_page.replace("num_to_fetch=4", f"num_to_fetch={posts_per_page}")
+                if "num_to_fetch=4" in next_page:
+                    next_page = next_page.replace("num_to_fetch=4", f"num_to_fetch={posts_per_page}")
+                else:
+                    next_page = next_page + f"&num_to_fetch={posts_per_page}"
             next_url = utils.urljoin(FB_MOBILE_BASE_URL, next_page)
         else:
             logger.info("Page parser did not find next page URL")
@@ -98,7 +102,7 @@ class PageParser:
     cursor_regex = re.compile(r'href[:=]"(/page_content[^"]+)"')  # First request
     cursor_regex_2 = re.compile(r'href"[:=]"(\\/page_content[^"]+)"')  # Other requests
     cursor_regex_3 = re.compile(
-        r'href:"(/profile/timeline/stream/\?cursor[^"]+)"'
+        r'(\\*/profile\\*/timeline\\*/stream\\*/\?cursor[^"]+)"'
     )  # scroll/cursor based, first request
     cursor_regex_4 = re.compile(
         r'href\\":\\"\\+(/profile\\+/timeline\\+/stream[^"]+)\"'
@@ -121,6 +125,18 @@ class PageParser:
     def get_next_page(self) -> Optional[URL]:
         assert self.cursor_blob is not None
 
+        match1 = self.cursor_regex.search(self.cursor_blob)
+        match2 = self.cursor_regex_2.search(self.cursor_blob)
+        match3 = self.cursor_regex_3.search(self.cursor_blob)
+        match4 = self.cursor_regex_4.search(self.cursor_blob)
+
+        s = "match1 : {}, match2 : {}, match3 : {}, match4 : {}".format(match1 is not None,
+                                                                        match2 is not None,
+                                                                        match3 is not None,
+                                                                        match4 is not None)
+        print(s)
+
+
         match = self.cursor_regex.search(self.cursor_blob)
         if match:
             return utils.unquote(match.groups()[0]).replace("&amp;", "&")
@@ -132,9 +148,11 @@ class PageParser:
 
         match = self.cursor_regex_3.search(self.cursor_blob)
         if match:
-            return match.groups()[0]
+            value = match.groups()[0]
+            return utils.unquote(value.encode('utf-8').decode('unicode_escape').replace('\\/', '/')).replace("&amp;",
+                                                                                                             "&")
 
-        match = self.cursor_regex_4.search(self.response.text)
+        match = self.cursor_regex_4.search(self.cursor_blob)
         if match:
             value = match.groups()[0]
             return re.sub(r'\\+/', '/', value)
@@ -166,6 +184,7 @@ class PageParser:
 
     def _get_page(self, selection, selection_name) -> Page:
         raw_page = self.get_raw_page()
+
         raw_posts = raw_page.find(selection)
 
         if not raw_posts:
