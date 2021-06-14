@@ -128,28 +128,36 @@ class PostExtractor:
         """Parses the element into self.item"""
 
         methods = [
-            self.extract_post_url,
-            self.extract_post_id,
-            self.extract_text,
-            self.extract_time,
-            self.extract_photo_link,
-            self.extract_image_lq,
             self.extract_likes,
             self.extract_comments,
             self.extract_shares,
-            self.extract_link,
-            self.extract_user_id,
-            self.extract_username,
-            self.extract_video,
-            self.extract_video_thumbnail,
-            self.extract_video_id,
-            self.extract_video_meta,
-            self.extract_is_live,
-            self.extract_factcheck,
-            self.extract_share_information,
-            self.extract_availability,
-            self.extract_listing
+            self.extract_time,
+            self.extract_text
         ]
+
+        # methods = [
+        #     self.extract_post_url,
+        #     self.extract_post_id,
+        #     self.extract_text,
+        #     self.extract_time,
+        #     self.extract_photo_link,
+        #     self.extract_image_lq,
+        #     self.extract_likes,
+        #     self.extract_comments,
+        #     self.extract_shares,
+        #     self.extract_link,
+        #     self.extract_user_id,
+        #     self.extract_username,
+        #     self.extract_video,
+        #     self.extract_video_thumbnail,
+        #     self.extract_video_id,
+        #     self.extract_video_meta,
+        #     self.extract_is_live,
+        #     self.extract_factcheck,
+        #     self.extract_share_information,
+        #     self.extract_availability,
+        #     self.extract_listing
+        # ]
 
         post = self.make_new_post()
         post['source'] = self.element
@@ -285,9 +293,16 @@ class PostExtractor:
 
         # Try to extract from the abbr element
         date_element = self.element.find('abbr', first=True)
+        if date_element is None:
+            k = 5
         if date_element is not None:
             ddp = DateDataParser(languages=['tr'])
             d = ddp.get_date_data(date_element.text)
+            if d.date_obj is None:
+                ddp = DateDataParser(languages=["en"])
+                d = ddp.get_date_data(date_element.text)
+                if d.date_obj is None:
+                    k = 5
             return {'time': d.date_obj}
 
         return None
@@ -416,13 +431,21 @@ class PostExtractor:
             except:
                 data = result[n-1]
 
-            if n == 1 and not (data + " Yorum") in container.text:
+            if n == 1 and (not (data + " Yorum") in container.text and\
+                           not (data + " yorum") in container.text and\
+                           not (data + " Comment") in container.text and\
+                           not (data + " comment") in container.text):
                 return {tag : 0}
 
-            if n == 2 and not (data + " Paylaşım") in container.text:
+            if n == 2 and (not (data + " Paylaşım") in container.text and\
+                          not (data + " paylaşım") in container.text and\
+                          not (data + " Shares") in container.text and\
+                          not (data + " shares") in container.text and \
+                           not (data + " Share") in container.text and \
+                           not (data + " share") in container.text):
                 return {tag : 0}
 
-        if data.endswith("B"):
+        if data.endswith("B") or data.endswith("K"):
             n = data[:len(data) - 2]
             n = n.replace(",",".")
             n = int(float(n) * 1000)

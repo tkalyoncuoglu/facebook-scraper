@@ -22,7 +22,7 @@ from dateparser import parse
 
 if __name__ == "__main__":
     scraper = FacebookScraper()
-    scraper.login("tkalyoncuoglu@gmail.com", "")
+    scraper.login("jerteherku@nedoz.com", "ta123456ta")
     # for post in scraper.get_posts("CengizErgunResmi", pages = 1, comments=False, posts_per_page=1):
     #     print("***************")
     #     print(post["likes"])
@@ -30,7 +30,11 @@ if __name__ == "__main__":
     #     print(post["shares"])
 
     word_list = [
-       "murtaza.dayanc"
+       "rergu"
+       #"drhasanakgun"
+       # "UlasTEPE"
+       #"akpolatriza"
+       #"murtaza.dayanc"
         #"tekkekoybelediye"
         #"ilkay.girginerdogan.96"
         #"profile.php?id=100035360179973"
@@ -55,13 +59,14 @@ if __name__ == "__main__":
         username = word
 
         utc = pytz.UTC
-        posts = scraper.get_posts(username, pages=50000, comments=False)
+        options = {"comments" : False}
+        posts = scraper.get_posts(username, pages=5, options=options)
         for post in posts:
             print(post["time"])
-            if post["time"].replace(tzinfo=utc) < datetime.datetime(2020, 12, 31, 23, 59, 59).replace(tzinfo=utc):# and count > 3:
+            if post["time"] is not None and post["time"].replace(tzinfo=utc) < datetime.datetime(2021, 5, 31, 23, 59, 59).replace(tzinfo=utc):# and count > 3:
                 break
-            elif post["time"].replace(tzinfo=utc) >= datetime.datetime(2020, 12, 31, 23, 59, 59).replace(tzinfo=utc) and post[
-                "time"].replace(tzinfo=utc) < datetime.datetime(2021, 1, 31, 23, 59, 59).replace(tzinfo=utc):
+            elif post["time"] is None or post["time"].replace(tzinfo=utc) >= datetime.datetime(2021, 5, 31, 23, 59, 59).replace(tzinfo=utc) and post[
+                "time"].replace(tzinfo=utc) < datetime.datetime(2021, 6, 30, 23, 59, 59).replace(tzinfo=utc):
                 count = count + 1
                 if post["likes"] is not None:
                     like += int(post["likes"])
